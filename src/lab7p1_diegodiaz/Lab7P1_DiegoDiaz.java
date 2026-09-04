@@ -4,6 +4,9 @@
  */
 package lab7p1_diegodiaz;
 
+import java.util.Random;
+import java.util.Scanner;
+
 /**
  *
  * @author diego
@@ -15,6 +18,25 @@ public class Lab7P1_DiegoDiaz {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Scanner leer = new Scanner(System.in);
+        Random rnd = new Random();
+        int opcion;
+        do {
+            
+            System.out.println("==Menu==");
+            System.out.println("1. PACMAN");
+            System.out.println("2. Salir");
+            System.out.print("Ingrese una opcion: ");
+            opcion = leer.nextInt();
+            
+            
+            
+            
+        } while (opcion != 2);
+        
+        
+        
+        
     }
     
 }
