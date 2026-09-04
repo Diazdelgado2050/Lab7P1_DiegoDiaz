@@ -7,10 +7,6 @@ package lab7p1_diegodiaz;
 import java.util.Random;
 import java.util.Scanner;
 
-/**
- *
- * @author diego
- */
 public class Lab7P1_DiegoDiaz {
 
     static char[][] tablero = new char[10][15];
@@ -25,13 +21,10 @@ public class Lab7P1_DiegoDiaz {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
         Scanner leer = new Scanner(System.in);
         Random rnd = new Random();
         int opcion;
-
         do {
-
             System.out.println("==Menu==");
             System.out.println("1. PACMAN");
             System.out.println("2. Salir");
@@ -39,45 +32,50 @@ public class Lab7P1_DiegoDiaz {
             opcion = leer.nextInt();
 
             if (opcion == 1) {
+                puntos = 0;
+                iniciarJuego(leer, rnd);
 
             }
-
         } while (opcion != 2);
-
     }
 
     public static void iniciarJuego(Scanner leer, Random rnd) {
-       
+        llenarMatrices();
+        colocarElementos(rnd);
 
         boolean juegoTerminado = false;
         System.out.println("BIENVENIDO A PACMAN");
 
         while (!juegoTerminado) {
-            int puntos = 0;
-            System.out.println("Puntos" + puntos + "\n");
+            System.out.println("Puntos: " + puntos + "\n");
             printTablero();
 
             if (puntos >= 1000) {
                 System.out.println("Felicidades llegaste a 1000 puntos, has ganado!");
                 System.out.println("Puntuacion final: " + puntos + "\n");
                 break;
-           
             }
+            System.out.println("ESCOGE TU JUGADA!");
+            System.out.print("W, S, A, D: ");
+            char mov = leer.next().charAt(0);
+            mov = Character.toLowerCase(mov);
+
+            if (mov != 'w' && mov != 's' && mov != 'a' && mov != 'd') {
+                continue;
+            }
+
         }
     }
 
-    private static void llenarMatrices() {
+    public static void llenarMatrices() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 15; j++) {
                 tablero[i][j] = '*';
-
             }
         }
-
     }
 
     public static void colocarElementos(Random rnd) {
-
         movPacX = rnd.nextInt(10);
         movPacY = rnd.nextInt(15);
         tablero[movPacX][movPacY] = 'C';
@@ -92,21 +90,17 @@ public class Lab7P1_DiegoDiaz {
                 tablerodos[f][c] = 'O';
                 obstaculos++;
             }
-
         }
-
         int fruta = 0;
-        while (fruta < 2) {
+        while (fruta < 1) {
             int f = rnd.nextInt(10);
             int c = rnd.nextInt(15);
             if (tablero[f][c] == '*') {
                 tablero[f][c] = 'O';
                 tablerodos[f][c] = 'O';
                 fruta++;
-
             }
         }
-
         for (int i = 0; i < 3; i++) {
             boolean colocado = false;
             while (!colocado) {
@@ -118,31 +112,56 @@ public class Lab7P1_DiegoDiaz {
                     tablero[f][c] = letrasFan[i];
 
                     colocado = true;
-
                 }
             }
         }
-
     }
 
     public static void printTablero() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 15; j++) {
-                System.out.println(tablero[i][j] + " ");
-
+                System.out.print(tablero[i][j] + " ");
             }
-
+            System.out.println();
         }
     }
 
-    public static int[] Movimientos(char mov) {
-        
-        
-        
-        
-        
-        
-        return null;
+    public static int[] MovimientosPac(char mov) {
+        int posX = movPacX;
+        int posY = movPacY;
+
+        if (mov == 'w') {
+            posX = (movPacX - 1 + 10) % 10;
+        } else if (mov == 's') {
+            posX = (movPacX + 1) % 10;
+        } else if (mov == 'a') {
+            posY = (movPacY - 1 + 15) % 15;
+        } else if (mov == 'd') {
+            posY = (movPacY + 1) % 15;
+        }
+        if (tablero[posX][posY] == 'O') {
+
+            return new int[]{puntos, 0, 1};
+        }
+        if (tablero[posX][posY] == 'R' || tablero[posX][posY] == 'M' || tablero[posX][posY] == 'G') {
+            return new int[]{puntos, 1, 0};
+        }
+        if (tablerodos[posX][posY] == '*') {
+            puntos += 50;
+        } else if (tablerodos[posX][posY] == 'B') {
+            puntos += 150;
+        }
+
+        tablero[movPacX][movPacY] = ' ';
+        tablerodos[movPacX][posY] = ' ';
+
+        movPacX = posX;
+        movPacY = posY;
+        tablero[movPacX][posY] = 'C';
+        tablerodos[posX][posY] = ' ';
+
+        return new int[]{puntos, 0, 0};
+
     }
 
     public static boolean moverFantasmas(Random rnd) {
