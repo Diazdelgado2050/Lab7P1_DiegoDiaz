@@ -25,7 +25,7 @@ public class Lab7P1_DiegoDiaz {
         Random rnd = new Random();
         int opcion;
         do {
-            System.out.println("==Menu==");
+            System.out.println("==Menu PACMAN :V==");
             System.out.println("1. PACMAN");
             System.out.println("2. Salir");
             System.out.print("Ingrese una opcion: ");
@@ -52,7 +52,7 @@ public class Lab7P1_DiegoDiaz {
 
             if (puntos >= 1000) {
                 System.out.println("Felicidades llegaste a 1000 puntos, has ganado!");
-                System.out.println("Puntuacion final: " + puntos + "\n");
+                System.out.println("Tu puntuacion final es: " + puntos + " ");
                 break;
             }
             System.out.println("ESCOGE TU JUGADA!");
@@ -64,13 +64,37 @@ public class Lab7P1_DiegoDiaz {
                 continue;
             }
 
+            int[] resultado = MovimientosPac(mov);
+            puntos = resultado[0];
+
+            if (resultado[2] == 1) {
+                System.out.println("Obstaculo!");
+                continue;
+            }
+
+            if (resultado[1] == 1) {
+                printTablero();
+                System.out.println("Fuiste atrapado, has perdido :(");
+                System.out.println("Puntuacion final: " + puntos + "\n");
+                break;
+
+            }
+            boolean atrapado = moverFantasmas(rnd);
+            if (atrapado) {
+                printTablero();
+                System.out.println("\nFuiste atrapado, has perdido!");
+                System.out.println("Puntuacion final: " + puntos + "\n");
+                break;
+            }
         }
+
     }
 
     public static void llenarMatrices() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 15; j++) {
                 tablero[i][j] = '*';
+                tablerodos[i][j] = '*';
             }
         }
     }
@@ -96,8 +120,8 @@ public class Lab7P1_DiegoDiaz {
             int f = rnd.nextInt(10);
             int c = rnd.nextInt(15);
             if (tablero[f][c] == '*') {
-                tablero[f][c] = 'O';
-                tablerodos[f][c] = 'O';
+                tablero[f][c] = 'B';
+                tablerodos[f][c] = 'B';
                 fruta++;
             }
         }
@@ -110,7 +134,6 @@ public class Lab7P1_DiegoDiaz {
                     movFanX[i] = f;
                     movFanY[i] = c;
                     tablero[f][c] = letrasFan[i];
-
                     colocado = true;
                 }
             }
@@ -121,6 +144,7 @@ public class Lab7P1_DiegoDiaz {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 15; j++) {
                 System.out.print(tablero[i][j] + " ");
+
             }
             System.out.println();
         }
@@ -153,7 +177,7 @@ public class Lab7P1_DiegoDiaz {
         }
 
         tablero[movPacX][movPacY] = ' ';
-        tablerodos[movPacX][posY] = ' ';
+        tablerodos[movPacX][movPacY] = ' ';
 
         movPacX = posX;
         movPacY = posY;
@@ -166,7 +190,36 @@ public class Lab7P1_DiegoDiaz {
 
     public static boolean moverFantasmas(Random rnd) {
 
-        return false;
+        for (int i = 0; i < 3; i++) {
+            int posFan = rnd.nextInt(4);
+            int posX = movFanX[i];
+            int posY = movFanY[i];
 
+            if (posFan == 0) {
+                posX = (movFanX[i] - 1 + 10) % 10;
+            } else if (posFan == 1) {
+                posX = (movFanX[i] + 1) % 10;
+            } else if (posFan == 2) {
+                posY = (movFanY[i] - 1 + 15) % 15;
+            } else if (posFan == 3) {
+                posY = (movFanY[i] + 1) % 15;
+            }
+
+            if (tablero[posX][posY] == 'O' || tablero[posX][posY] == 'R' || tablero[posX][posY] == 'M' || tablero[posX][posY] == 'G') {
+                continue;
+
+            }
+            if (tablero[posX][posY] == 'C') {
+                return true;
+            }
+
+            tablero[movFanX[i]][movFanY[i]] = tablerodos[movFanX[i]][movFanY[i]];
+
+            movFanX[i] = posX;
+            movFanY[i] = posY;
+            tablero[movFanX[i]][movFanY[i]] = letrasFan[i];
+
+        }
+        return false;
     }
 }
